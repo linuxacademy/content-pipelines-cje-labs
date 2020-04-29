@@ -3,6 +3,7 @@ pipeline{
         docker {
             image 'python:alpine'
             args '-u root'
+            label 'docker1'
         }
     }
     stages{
@@ -14,18 +15,12 @@ pipeline{
         stage('Clone code from Git repository and setup python env'){
             steps{
                 sh 'git clone https://github.com/linuxacademy/content-pipelines-cje-labs.git'
-                dir('content-pipelines-cje-labs'){
-                    sh 'pwd'
-                    sh 'pip install -r requirements.txt'
-                }
+                sh 'pip install -r content-pipelines-cje-labs/lab3_lab4/dog_pics_downloader/requirements.txt'
             }
         }
         stage('test code'){
             steps{
-                dir('content-pipelines-cje-labs'){
-                    sh 'pwd'
-                    sh 'python dog_pic_get_class.py'
-                }
+                sh 'python content-pipelines-cje-labs/lab3_lab4/dog_pics_downloader/dog_pic_get_class.py'
             }
         }
     }
@@ -34,14 +29,14 @@ pipeline{
             echo "Job execution complete."
         }
         success{
-            archiveArtifacts artifacts : 'content-pipelines-cje-labs/*.jpg'
+            archiveArtifacts artifacts : '*.jpg'
         }
         unsuccessful{
             echo "Job execution status is failed, please check error logs"
         }
         cleanup{
                 echo 'Cleaning up environment'
-                sh 'rm -rf content-pipelines-cje-labs'
+                sh 'rm -rf content-pipelines-cje-labs *.jpg'
         }
     }
 }

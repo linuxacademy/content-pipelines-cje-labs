@@ -18,23 +18,20 @@ pipeline{
                 sh 'ls *.jpg'
             }
         }
-        stage('Fetch code'){
+        stage('Fetch and run code'){
             steps{
                 sh 'git clone https://github.com/linuxacademy/content-pipelines-cje-labs.git'
-                dir('image_watermarker'){
-                    sh 'pwd'
-                    sh 'pip3 install -r requirements.txt'
-                }
-                sh 'image_watermarker/watermark.py'
+                sh 'pip3 install -r content-pipelines-cje-labs/lab3_lab4/image_watermarker/requirements.txt'
+                sh 'python3 content-pipelines-cje-labs/lab3_lab4/image_watermarker/watermark.py'
             }
         }
     }
     post{
         success{
-            archiveArtifacts artifacts: 'watermarked*'
+            archiveArtifacts artifacts: '*watermarked.jpg'
         }
         cleanup{
-            sh 'rm -rf image_watermarker'
+            sh 'rm -rf content-pipelines-cje-labs *.jpg'
         }
     }
 }
