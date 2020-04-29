@@ -1,0 +1,40 @@
+pipeline{
+    agent {
+        docker{
+            image 'centos:7'
+            args '-u root'
+            label 'docker2'
+        }
+    }
+    stages{
+        stage('install required packages'){
+            steps{
+                sh 'yum -y install python3 python3-pip zlib-devel gcc git'
+            }
+        }
+        stage('Copy artifacts'){
+            steps{
+                copyArtifacts(projectName: 'pipeline1', flatten: true)
+                sh 'ls *.jpg'
+            }
+        }
+        stage('Fetch code'){
+            steps{
+                sh 'git clone https://github.com/linuxacademy/content-pipelines-cje-labs.git'
+                dir('image_watermarker'){
+                    sh 'pwd'
+                    sh 'pip3 install -r requirements.txt'
+                }
+                sh 'image_watermarker/watermark.py'
+            }
+        }
+    }
+    post{
+        success{
+            archiveArtifacts artifacts: 'watermarked*'
+        }
+        cleanup{
+            sh 'rm -rf image_watermarker'
+        }
+    }
+}
