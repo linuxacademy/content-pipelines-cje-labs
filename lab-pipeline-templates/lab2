@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Build'){
             steps{
-                sh 'gcc --std=c99 -o mario content-pipelines-cje-labs/mario.c'
+                sh 'gcc --std=c99 -o mario content-pipelines-cje-labs/lab1_lab2/mario.c'
             }
         }
     }
